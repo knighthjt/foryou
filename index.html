@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我想对你说</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 背景爱心飘落 -->
+    <div id="hearts-container"></div>
+    <!-- 烟火效果 -->
+    <div id="fireworks"></div>
+
+    <div id="app">
+        <!-- ① 视频播放 -->
+        <section id="screen-video" class="screen active">
+            <div class="video-wrapper">
+                <video id="love-video" autoplay muted playsinline controls>
+                    <source src="开头视频/1781618141689.mp4" type="video/mp4">
+                    你的浏览器不支持视频播放
+                </video>
+            </div>
+            <p class="video-hint">每一个瞬间都闪闪发光，因为有你在</p>
+            <button class="btn-next" onclick="nextScreen()">继续</button>
+        </section>
+
+        <!-- ② 相识回忆 -->
+        <section id="screen-meet" class="screen">
+            <h2 class="screen-title">我们的相识</h2>
+            <div class="meet-layout">
+                <div class="carousel meet-carousel" id="meet-carousel">
+                    <div class="carousel-track" id="meet-track"></div>
+                    <div class="carousel-dots" id="meet-dots"></div>
+                </div>
+                <div class="typewriter" id="meet-text"></div>
+            </div>
+            <button class="btn-next" id="meet-btn" style="display:none" onclick="nextScreen()">继续</button>
+        </section>
+
+        <!-- ③ 争吵记录 -->
+        <section id="screen-argue" class="screen">
+            <h2 class="screen-title">我们也吵过架</h2>
+            <div class="argue-layout">
+                <div class="carousel argue-carousel" id="argue-carousel">
+                    <div class="carousel-track" id="argue-track"></div>
+                    <div class="carousel-dots" id="argue-dots"></div>
+                </div>
+                <div class="chat-bubble-container" id="argue-chat"></div>
+            </div>
+            <button class="btn-next" id="argue-btn" style="display:none" onclick="nextScreen()">继续</button>
+        </section>
+
+        <!-- ④ 她写给我的情书 -->
+        <section id="screen-her-letter" class="screen">
+            <h2 class="screen-title">她写给我的情书</h2>
+            <div class="carousel" id="her-letter-carousel">
+                <div class="carousel-track" id="her-letter-track"></div>
+                <div class="carousel-dots" id="her-letter-dots"></div>
+            </div>
+            <button class="btn-next" onclick="nextScreen()">继续</button>
+        </section>
+
+        <!-- ⑤ 我写给她的情书 -->
+        <section id="screen-my-letter" class="screen">
+            <h2 class="screen-title">我写给你的</h2>
+            <div class="paper-letter" id="my-letter-content"></div>
+            <button class="btn-next" id="my-letter-btn" style="display:none" onclick="nextScreen()">感受到了</button>
+        </section>
+
+        <!-- ⑥ 她的照片 -->
+        <section id="screen-photos" class="screen">
+            <h2 class="screen-title">我眼中的你</h2>
+            <div class="carousel" id="photos-carousel">
+                <div class="carousel-track" id="photos-track"></div>
+                <div class="carousel-dots" id="photos-dots"></div>
+            </div>
+            <button class="btn-next" onclick="nextScreen()">继续</button>
+        </section>
+
+        <!-- ⑦ 表白宣言 -->
+        <section id="screen-confession" class="screen">
+            <div class="confession-container">
+                <h1 class="confession-title">做我女朋友</h1>
+                <div class="heart-animation">💕</div>
+                <div class="confession-buttons">
+                    <button class="btn-yes" onclick="handleYes()">好呀❤️</button>
+                    <button class="btn-no" onclick="nextScreen()">还要想想</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 背景音乐 -->
+        <audio id="bg-music" loop preload="auto"></audio>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

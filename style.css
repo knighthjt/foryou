@@ -1,0 +1,382 @@
+/* === 全局 === */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    width: 100%; height: 100%;
+    font-family: 'Noto Serif SC', 'Microsoft YaHei', serif;
+    background: linear-gradient(135deg, #0a1e3d 0%, #152a50 40%, #1a3a6f 100%);
+    overflow: hidden;
+    color: #e0f2ff;
+}
+
+body {
+    display: flex; align-items: center; justify-content: center;
+}
+
+#app {
+    width: 100%; height: 100vh;
+    position: relative; overflow: hidden;
+}
+
+/* === 屏幕切换（淡入淡出） === */
+.screen {
+    width: 100%; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; padding: 20px;
+    position: absolute; top: 0; left: 0;
+    opacity: 0; transition: opacity 0.8s ease;
+    pointer-events: none; overflow-y: auto;
+}
+.screen.active {
+    opacity: 1; pointer-events: auto;
+}
+
+/* === 标题 === */
+.screen-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 2.2em; color: #93c5fd;
+    text-align: center; margin-bottom: 25px;
+    font-weight: 400; letter-spacing: 3px;
+    text-shadow: 0 2px 12px rgba(93,179,255,0.3);
+}
+
+/* === 按钮 === */
+.btn-next {
+    padding: 14px 45px; font-size: 1.1em;
+    font-family: 'Noto Serif SC', serif;
+    background: linear-gradient(135deg, #5db3ff 0%, #4a90e2 100%);
+    color: #fff; border: none; border-radius: 30px;
+    cursor: pointer; transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(93,179,255,0.4);
+    margin-top: 25px; letter-spacing: 1px;
+}
+.btn-next:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(93,179,255,0.6);
+}
+
+/* === ① 视频屏 === */
+#screen-video { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); }
+.video-wrapper {
+    width: 90%; max-width: 500px;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 15px 50px rgba(93,179,255,0.3);
+    border: 3px solid rgba(93,179,255,0.3);
+    background: rgba(0,0,0,0.3);
+}
+.video-wrapper video {
+    display: block; width: 100%; border-radius: 17px;
+}
+.video-hint {
+    margin-top: 25px; font-size: 1.1em;
+    color: #b3d9ff; text-align: center;
+    max-width: 500px; line-height: 1.8;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* === 图片轮播 === */
+.carousel {
+    width: 90%; max-width: 500px; position: relative;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(93,179,255,0.25);
+    border: 2px solid rgba(93,179,255,0.2);
+    background: rgba(0,0,0,0.2);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.carousel-track {
+    display: flex; transition: transform 0.5s ease;
+    align-items: flex-start;
+}
+.carousel-track img {
+    width: 100%; flex-shrink: 0;
+    display: block;
+}
+/* 滚动条 */
+.carousel::-webkit-scrollbar { width: 4px; }
+.carousel::-webkit-scrollbar-thumb { background: rgba(93,179,255,0.5); border-radius: 2px; }
+.carousel::-webkit-scrollbar-track { background: transparent; }
+.carousel-dots {
+    display: flex; justify-content: center; gap: 8px;
+    padding: 12px 0;
+}
+.carousel-dots span {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(147,197,253,0.3); transition: all 0.3s;
+}
+.carousel-dots span.active {
+    background: #5db3ff; box-shadow: 0 0 8px rgba(93,179,255,0.6);
+}
+
+/* === ② 相识屏 - 左右布局 === */
+#screen-meet { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); padding-top: 30px; }
+.meet-layout {
+    display: flex; gap: 15px;
+    width: 95%; max-width: 700px;
+    align-items: flex-start;
+}
+.meet-carousel {
+    flex: 0 0 40%; max-width: 40%;
+    max-height: 70vh; overflow-y: auto;
+}
+#meet-text {
+    flex: 1; margin-top: 0;
+    max-height: 70vh; font-size: 0.88em;
+    line-height: 2; padding: 18px;
+    overflow-y: auto;
+}
+
+/* === 打字机文字区 === */
+.typewriter {
+    width: 90%; max-width: 500px; margin-top: 20px;
+    font-size: 1em; color: #c5e3ff;
+    line-height: 2.2; text-align: left;
+    background: linear-gradient(135deg, rgba(74,144,226,0.08) 0%, rgba(59,130,246,0.04) 100%);
+    padding: 25px; border-radius: 16px;
+    border-left: 4px solid #5db3ff;
+    min-height: 120px; max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid rgba(93,179,255,0.15);
+}
+.typewriter-line {
+    animation: fadeLine 0.5s ease forwards;
+    margin-bottom: 10px; font-weight: 300;
+}
+.typewriter-line.header {
+    color: #93c5fd; font-size: 1.05em;
+    font-weight: 600; margin-top: 15px; margin-bottom: 12px;
+}
+.typewriter-line.section {
+    color: #5db3ff; font-size: 0.9em;
+    font-weight: 600; margin-top: 18px; margin-bottom: 8px;
+    text-align: center; letter-spacing: 2px;
+}
+.typewriter-line.her { color: #93c5fd; }
+.typewriter-line.me  { color: #b3d9ff; }
+
+@keyframes fadeLine {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === ③ 争吵屏 - 左右布局 === */
+#screen-argue { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); padding-top: 30px; }
+.argue-layout {
+    display: flex; gap: 15px;
+    width: 95%; max-width: 700px;
+    align-items: flex-start;
+}
+.argue-carousel {
+    flex: 0 0 40%; max-width: 40%;
+    max-height: 70vh; overflow-y: auto;
+}
+.chat-bubble-container {
+    flex: 1; margin-top: 0;
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 70vh; min-height: 60px;
+    overflow-y: auto; padding: 10px;
+}
+.chat-bubble {
+    padding: 12px 18px; border-radius: 18px;
+    max-width: 85%; font-size: 0.92em;
+    line-height: 1.7; animation: slideIn 0.4s ease;
+    font-weight: 300; word-break: break-word;
+}
+.chat-bubble.she {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    color: #e0f2ff; border-radius: 4px 18px 18px 18px;
+    box-shadow: 0 4px 15px rgba(74,144,226,0.25);
+}
+.chat-bubble.me {
+    align-self: flex-end;
+    background: rgba(147,197,253,0.12);
+    color: #c5e3ff; border-radius: 18px 4px 18px 18px;
+    border: 1px solid rgba(147,197,253,0.25);
+}
+.chat-bubble.section-header {
+    align-self: center; background: transparent;
+    color: #5db3ff; font-size: 0.85em;
+    font-weight: 600; letter-spacing: 2px;
+    text-align: center; max-width: 100%;
+    margin: 10px 0 5px; padding: 6px 0;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === ④ 她写给我的情书 === */
+#screen-her-letter { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); }
+#screen-her-letter .carousel { max-width: 95%; width: 100%; max-height: 78vh; overflow-y: auto; }
+
+/* === ⑤ 我写给她的信纸 === */
+#screen-my-letter { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); padding-top: 40px; }
+.paper-letter {
+    width: 90%; max-width: 500px;
+    background: linear-gradient(180deg,
+        rgba(253,246,227,0.95) 0%, rgba(250,242,220,0.92) 100%);
+    padding: 40px 28px; border-radius: 8px;
+    box-shadow:
+        0 15px 40px rgba(93,179,255,0.35),
+        inset 0 0 80px rgba(139,119,80,0.08);
+    color: #3d2b1f; font-family: 'Ma Shan Zheng', cursive;
+    font-size: 1.25em; line-height: 2.4;
+    min-height: 280px; max-height: 450px;
+    overflow-y: auto; position: relative;
+    border: 1px solid rgba(139,119,80,0.15);
+}
+/* 信纸横线 */
+.paper-letter::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        transparent, transparent 38px,
+        rgba(139,119,80,0.12) 39px
+    );
+    pointer-events: none; border-radius: 8px;
+}
+.paper-letter .letter-line {
+    position: relative; z-index: 1;
+    animation: fadeLine 0.6s ease forwards;
+    margin-bottom: 4px; padding-left: 8px;
+}
+.paper-letter .letter-sign {
+    text-align: right; margin-top: 20px;
+    animation: fadeLine 0.6s ease forwards;
+}
+
+/* === ⑥ 照片屏 === */
+#screen-photos { background: linear-gradient(135deg, #0a1e3d 0%, #152a50 100%); }
+#screen-photos .carousel { max-width: 95%; max-height: 78vh; overflow-y: auto; }
+
+/* === ⑦ 表白屏 === */
+#screen-confession {
+    background: linear-gradient(135deg, #0a1e3d 0%, #152a50 50%, #1a3a6f 100%);
+    overflow: hidden;
+}
+#screen-confession::before {
+    content: ''; position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(93,179,255,0.12) 0%, transparent 70%);
+    border-radius: 50%; top: -150px; right: -150px;
+    animation: pulse 4s ease-in-out infinite;
+}
+#screen-confession::after {
+    content: ''; position: absolute;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(147,197,253,0.08) 0%, transparent 70%);
+    border-radius: 50%; bottom: -100px; left: -100px;
+    animation: pulse 5s ease-in-out infinite reverse;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.1); }
+}
+.confession-container {
+    text-align: center; position: relative; z-index: 2;
+}
+.confession-title {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 3.2em; color: #e0f2ff; margin-bottom: 50px;
+    text-shadow: 0 6px 25px rgba(93,179,255,0.5);
+    animation: fadeIn 0.8s ease; font-weight: 400;
+    letter-spacing: 4px;
+}
+.heart-animation {
+    font-size: 5em; margin-bottom: 50px;
+    animation: heartBeat 0.7s ease infinite;
+    filter: drop-shadow(0 0 20px rgba(93,179,255,0.5));
+}
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    25%      { transform: scale(1.3); }
+    50%      { transform: scale(1); }
+}
+.confession-buttons {
+    display: flex; gap: 30px; justify-content: center;
+    flex-wrap: wrap; margin-top: 30px;
+}
+.btn-yes {
+    padding: 16px 50px; font-size: 1.2em;
+    font-family: 'Noto Serif SC', serif;
+    background: linear-gradient(135deg, #5db3ff 0%, #4a90e2 100%);
+    color: #fff; border: none; border-radius: 35px;
+    cursor: pointer; transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(93,179,255,0.4);
+    letter-spacing: 1px;
+}
+.btn-yes:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(93,179,255,0.6);
+}
+.btn-no {
+    padding: 16px 50px; font-size: 1.2em;
+    font-family: 'Noto Serif SC', serif;
+    background: rgba(147,197,253,0.15);
+    color: #c5e3ff; border: 2px solid rgba(93,179,255,0.35);
+    border-radius: 35px; cursor: pointer;
+    transition: all 0.4s ease; letter-spacing: 1px;
+    box-shadow: 0 8px 25px rgba(93,179,255,0.15);
+}
+.btn-no:hover {
+    background: rgba(147,197,253,0.25);
+    border-color: rgba(93,179,255,0.55);
+}
+
+/* === 爱心飘落 === */
+#hearts-container {
+    position: fixed; width: 100%; height: 100%;
+    top: 0; left: 0; pointer-events: none; z-index: 10;
+}
+.heart {
+    position: fixed; font-size: 1.8em;
+    animation: fall 3s ease-in forwards;
+    filter: drop-shadow(0 0 8px rgba(93,179,255,0.4));
+}
+@keyframes fall {
+    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+}
+
+/* === 烟火 === */
+#fireworks {
+    position: fixed; width: 100%; height: 100%;
+    top: 0; left: 0; pointer-events: none; z-index: 11;
+}
+.particle {
+    position: fixed; pointer-events: none;
+}
+.particle::before {
+    content: ''; position: absolute;
+    width: 12px; height: 12px;
+    background: radial-gradient(circle, #5db3ff, #2d5fa3);
+    border-radius: 50%;
+    animation: explode 1s ease-out forwards;
+    box-shadow: 0 0 10px rgba(93,179,255,0.6);
+}
+@keyframes explode {
+    to { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+}
+
+/* === 淡入动画 === */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === 响应式 === */
+@media (max-width: 600px) {
+    .screen-title { font-size: 1.8em; }
+    .confession-title { font-size: 2.5em; }
+    .btn-next, .btn-yes, .btn-no { padding: 12px 35px; font-size: 1em; }
+    .paper-letter { padding: 30px 20px; font-size: 1.1em; line-height: 2.2; }
+    .typewriter { padding: 20px; font-size: 0.92em; line-height: 2; }
+    .meet-layout { flex-direction: column; }
+    .meet-carousel { flex: 1; max-width: 100%; width: 100%; }
+    #meet-text { max-height: 40vh; }
+    .argue-carousel { max-height: 40vh; }
+    .chat-bubble-container { max-height: 30vh; }
+    .carousel { max-width: 95%; }
+    .carousel { max-height: 50vh; }
+}
