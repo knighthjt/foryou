@@ -35,8 +35,8 @@ function nextScreen() {
 function initMusic() {
     const audio = document.getElementById('bg-music');
     // 扫描背景音乐文件夹中常见文件名
-    const candidates = ['bgm.mp3', 'bgm.m4a', 'bgm.wav', 'bgm.ogg',
-                        'music.mp3', 'love.mp3', 'bgm.m4a'];
+    const candidates = ['喜欢.mp3', 'bgm.mp3', 'music.mp3', 'love.mp3',
+                        'bgm.m4a', 'bgm.wav', 'bgm.ogg'];
     let idx = 0;
     function tryNext() {
         if (idx >= candidates.length) return;
@@ -61,33 +61,93 @@ function initCarousel(trackId, dotsId, imagePaths, autoInterval = 3500) {
     imagePaths.forEach((src, i) => {
         const img = document.createElement('img');
         img.src = src; img.alt = '';
-        img.loading = 'lazy';
-        // 长图处理：限制最大宽度，高度自适应
+        // 第一张图立即加载，其余延迟加载
+        if (i === 0) img.loading = 'eager';
+        else img.loading = 'lazy';
         img.style.maxWidth = '100%';
         img.style.height = 'auto';
         img.style.flexShrink = '0';
+        img.draggable = false;
         track.appendChild(img);
 
         const dot = document.createElement('span');
         if (i === 0) dot.classList.add('active');
-        dot.onclick = () => goToSlide(track, dots, i);
+        dot.onclick = () => goToSlide(i);
         dots.appendChild(dot);
     });
 
     let current = 0;
-    function goToSlide(t, d, index) {
+    let autoTimer = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchMoved = false;
+    const SWIPE_THRESHOLD = 50;
+
+    function goToSlide(index) {
         current = index;
-        t.style.transform = `translateX(-${index * 100}%)`;
-        d.querySelectorAll('span').forEach((s, i) => s.classList.toggle('active', i === index));
+        track.style.transform = `translateX(-${index * 100}%)`;
+        dots.querySelectorAll('span').forEach((s, i) => s.classList.toggle('active', i === index));
     }
 
-    if (currentCarouselTimer) clearInterval(currentCarouselTimer);
-    if (imagePaths.length > 1) {
-        currentCarouselTimer = setInterval(() => {
-            current = (current + 1) % imagePaths.length;
-            goToSlide(track, dots, current);
-        }, autoInterval);
+    function nextSlide() { goToSlide((current + 1) % imagePaths.length); }
+    function prevSlide() { goToSlide((current - 1 + imagePaths.length) % imagePaths.length); }
+
+    // 自动轮播
+    function startAuto() {
+        stopAuto();
+        if (imagePaths.length > 1) {
+            autoTimer = setInterval(nextSlide, autoInterval);
+        }
     }
+    function stopAuto() {
+        if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+    }
+
+    // 触摸滑动
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchMoved = false;
+        stopAuto();
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+        touchMoved = true;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        if (!touchMoved) { startAuto(); return; }
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        // 横向滑动距离大于竖向，且超过阈值
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > SWIPE_THRESHOLD) {
+            if (dx < 0) nextSlide();
+            else prevSlide();
+        }
+        setTimeout(startAuto, 2000);
+    });
+
+    // 鼠标拖拽（PC端模拟）
+    let mouseDown = false, mouseStartX = 0;
+    track.addEventListener('mousedown', (e) => {
+        mouseDown = true; mouseStartX = e.clientX; stopAuto();
+    });
+    track.addEventListener('mouseup', (e) => {
+        if (!mouseDown) return; mouseDown = false;
+        const dx = e.clientX - mouseStartX;
+        if (Math.abs(dx) > SWIPE_THRESHOLD) {
+            if (dx < 0) nextSlide();
+            else prevSlide();
+        }
+        setTimeout(startAuto, 2000);
+    });
+    track.addEventListener('mouseleave', () => { mouseDown = false; startAuto(); });
+
+    // 导出全局切换函数供定时器使用
+    if (currentCarouselTimer) clearInterval(currentCarouselTimer);
+    currentCarouselTimer = { stop: stopAuto };
+
+    startAuto();
 }
 
 // === ② 相识屏 - 左右布局 ===
