@@ -32,7 +32,7 @@ function nextScreen() {
     if (screens[currentScreen] === 'screen-her-letter') initHerLetterScreen();
     if (screens[currentScreen] === 'screen-my-letter') initMyLetterScreen();
     if (screens[currentScreen] === 'screen-photos') initPhotosScreen();
-    if (screens[currentScreen] === 'screen-confession') triggerFireworks();
+    if (screens[currentScreen] === 'screen-confession') { resetConfession(); triggerFireworks(); }
 }
 
 // === 背景音乐 ===
@@ -400,11 +400,16 @@ function initPhotosScreen() {
 
 // === ⑦ 表白 ===
 let rejectCount = 0;
-const CONFESS_MSGS = [
-    '想不想和我换上<br>抖音情侣头像',
-    '不再想想吗',
-    '最后一次了'
-];
+
+function resetConfession() {
+    rejectCount = 0;
+    const title = document.getElementById('confession-title');
+    const yesBtn = document.querySelector('.btn-yes');
+    const noBtn = document.querySelector('.btn-no');
+    if (title) title.innerHTML = '想不想和我换上<br>抖音情侣头像';
+    if (yesBtn) yesBtn.style.cssText = '';
+    if (noBtn) { noBtn.style.cssText = ''; noBtn.style.display = ''; }
+}
 
 function handleYes() {
     triggerFireworks();
@@ -418,21 +423,19 @@ function handleNo() {
     const noBtn = document.querySelector('.btn-no');
 
     if (rejectCount >= 3) {
-        // 第三次拒绝：只留超大接受按钮
         title.innerHTML = '最后一次了';
-        yesBtn.style.cssText = 'padding:24px 80px;font-size:2em;border-radius:50px;';
+        yesBtn.style.cssText = 'padding:28px 100px;font-size:2.2em;border-radius:50px;';
         noBtn.style.display = 'none';
         return;
     }
-
     if (rejectCount === 1) {
         title.innerHTML = '不再想想吗';
-        yesBtn.style.cssText = 'padding:20px 65px;font-size:1.5em;';
-        noBtn.style.cssText = 'padding:10px 30px;font-size:0.85em;opacity:0.6;';
+        yesBtn.style.cssText = 'padding:22px 70px;font-size:1.6em;';
+        noBtn.style.cssText = 'padding:10px 28px;font-size:0.8em;opacity:0.5;';
     } else if (rejectCount === 2) {
         title.innerHTML = '最后一次了';
-        yesBtn.style.cssText = 'padding:24px 80px;font-size:1.8em;border-radius:45px;';
-        noBtn.style.cssText = 'padding:8px 22px;font-size:0.7em;opacity:0.4;';
+        yesBtn.style.cssText = 'padding:26px 90px;font-size:1.9em;border-radius:45px;';
+        noBtn.style.cssText = 'padding:6px 18px;font-size:0.65em;opacity:0.3;';
     }
 }
 
