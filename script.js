@@ -36,31 +36,24 @@ function nextScreen() {
 }
 
 // === 背景音乐 ===
-let musicReady = false;
 function initMusic() {
     const audio = document.getElementById('bg-music');
-    const candidates = ['喜欢.mp3', 'bgm.mp3', 'music.mp3', 'love.mp3',
-                        'bgm.m4a', 'bgm.wav', 'bgm.ogg'];
-    let idx = 0;
-    function tryNext() {
-        if (idx >= candidates.length) return;
-        const src = '背景音乐/' + candidates[idx];
-        fetch(encodeURI(src), { method: 'HEAD' }).then(r => {
-            if (r.ok) {
-                audio.src = src; audio.volume = 0.3;
-                musicReady = true;
-            } else { idx++; tryNext(); }
-        }).catch(() => { idx++; tryNext(); });
-    }
-    tryNext();
+    audio.volume = 0.3;
+    // 静默预加载
+    audio.load();
 }
 
-// 首次用户交互时播放音乐
 function tryPlayMusic() {
     const audio = document.getElementById('bg-music');
-    if (musicReady && audio.paused) {
-        audio.play().catch(() => {});
-    }
+    if (audio.paused) audio.play().catch(() => {});
+}
+
+// === 图片预加载 ===
+const preloadCache = new Set();
+function preloadImage(src) {
+    if (preloadCache.has(src)) return;
+    preloadCache.add(src);
+    (new Image()).src = src;
 }
 
 // === 图片轮播 ===
@@ -70,15 +63,29 @@ function initCarousel(trackId, dotsId, imagePaths, autoInterval = 3500) {
     if (!track || !dots) return;
     track.innerHTML = ''; dots.innerHTML = '';
 
+    // 立即预加载所有图片
+    imagePaths.forEach(src => preloadImage(src));
+
     imagePaths.forEach((src, i) => {
+        // wrapper + 占位
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = 'flex-shrink:0;width:100%;position:relative;';
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'img-placeholder';
+        placeholder.textContent = '加载中...';
+
         const img = document.createElement('img');
         img.src = src; img.alt = '';
         img.loading = 'eager';
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
-        img.style.flexShrink = '0';
+        img.style.cssText = 'width:100%;display:block;opacity:0;transition:opacity 0.4s;';
         img.draggable = false;
-        track.appendChild(img);
+        img.onload = () => { img.style.opacity = '1'; placeholder.remove(); };
+        img.onerror = () => { placeholder.textContent = '加载失败'; };
+
+        wrapper.appendChild(placeholder);
+        wrapper.appendChild(img);
+        track.appendChild(wrapper);
 
         const dot = document.createElement('span');
         if (i === 0) dot.classList.add('active');
