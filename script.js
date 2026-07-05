@@ -39,13 +39,17 @@ function nextScreen() {
 function initMusic() {
     const audio = document.getElementById('bg-music');
     audio.volume = 0.3;
-    // 静默预加载
     audio.load();
+    // 预加载完成时输出状态
+    audio.oncanplaythrough = () => { console.log('[音乐] 加载完成，准备播放'); };
+    audio.onerror = () => { console.log('[音乐] 加载失败，请检查文件'); };
 }
 
 function tryPlayMusic() {
     const audio = document.getElementById('bg-music');
-    if (audio.paused) audio.play().catch(() => {});
+    if (audio.paused) {
+        audio.play().then(() => console.log('[音乐] 开始播放')).catch(e => console.log('[音乐] 播放失败:', e.message));
+    }
 }
 
 // === 图片预加载 ===
