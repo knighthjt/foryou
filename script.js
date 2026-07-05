@@ -40,15 +40,37 @@ function initMusic() {
     const audio = document.getElementById('bg-music');
     audio.volume = 0.3;
     audio.load();
-    // 预加载完成时输出状态
-    audio.oncanplaythrough = () => { console.log('[音乐] 加载完成，准备播放'); };
-    audio.onerror = () => { console.log('[音乐] 加载失败，请检查文件'); };
+
+    // 手机浏览器经常后台暂停音乐，监听并自动恢复
+    audio.onpause = () => {
+        // 不是用户手动暂停就自动恢复
+        if (musicStarted && !audio.ended) {
+            setTimeout(() => {
+                if (audio.paused && musicStarted) audio.play().catch(() => {});
+            }, 500);
+        }
+    };
+    // 页面切回来时恢复
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && musicStarted && audio.paused) {
+            audio.play().catch(() => {});
+        }
+    });
+    // 定期心跳保持音乐活跃
+    setInterval(() => {
+        if (musicStarted && audio.paused && !audio.ended) {
+            audio.play().catch(() => {});
+        }
+    }, 5000);
 }
 
+let musicStarted = false;
 function tryPlayMusic() {
     const audio = document.getElementById('bg-music');
     if (audio.paused) {
-        audio.play().then(() => console.log('[音乐] 开始播放')).catch(e => console.log('[音乐] 播放失败:', e.message));
+        audio.play().then(() => { musicStarted = true; }).catch(() => {});
+    } else {
+        musicStarted = true;
     }
 }
 
