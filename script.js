@@ -13,9 +13,13 @@ const screens = [
 let currentCarouselTimer = null;
 
 function nextScreen() {
+    tryPlayMusic(); // 首次点击触发音乐
+
+    if (currentCarouselTimer && currentCarouselTimer.stop) currentCarouselTimer.stop();
+    currentCarouselTimer = null;
+
     const cur = document.getElementById(screens[currentScreen]);
     cur.classList.remove('active');
-    if (currentCarouselTimer) { clearInterval(currentCarouselTimer); currentCarouselTimer = null; }
 
     currentScreen++;
     if (currentScreen >= screens.length) { currentScreen = screens.length - 1; return; }
@@ -32,9 +36,9 @@ function nextScreen() {
 }
 
 // === 背景音乐 ===
+let musicReady = false;
 function initMusic() {
     const audio = document.getElementById('bg-music');
-    // 扫描背景音乐文件夹中常见文件名
     const candidates = ['喜欢.mp3', 'bgm.mp3', 'music.mp3', 'love.mp3',
                         'bgm.m4a', 'bgm.wav', 'bgm.ogg'];
     let idx = 0;
@@ -44,11 +48,19 @@ function initMusic() {
         fetch(encodeURI(src), { method: 'HEAD' }).then(r => {
             if (r.ok) {
                 audio.src = src; audio.volume = 0.3;
-                audio.play().catch(() => {});
+                musicReady = true;
             } else { idx++; tryNext(); }
         }).catch(() => { idx++; tryNext(); });
     }
     tryNext();
+}
+
+// 首次用户交互时播放音乐
+function tryPlayMusic() {
+    const audio = document.getElementById('bg-music');
+    if (musicReady && audio.paused) {
+        audio.play().catch(() => {});
+    }
 }
 
 // === 图片轮播 ===
@@ -61,9 +73,7 @@ function initCarousel(trackId, dotsId, imagePaths, autoInterval = 3500) {
     imagePaths.forEach((src, i) => {
         const img = document.createElement('img');
         img.src = src; img.alt = '';
-        // 第一张图立即加载，其余延迟加载
-        if (i === 0) img.loading = 'eager';
-        else img.loading = 'lazy';
+        img.loading = 'eager';
         img.style.maxWidth = '100%';
         img.style.height = 'auto';
         img.style.flexShrink = '0';
