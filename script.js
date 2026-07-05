@@ -55,6 +55,23 @@ function preloadImage(src) {
     preloadCache.add(src);
     (new Image()).src = src;
 }
+// 所有图片路径，全局一次性预加载
+const ALL_IMAGES = [
+    '开头视频/1781618141689.mp4',
+    '相识阶段/Screenshot_2026_0620_234856.jpg',
+    '争吵图片/1780054394155.jpeg', '争吵图片/1780162064176.jpeg',
+    '争吵图片/1780195043840.jpeg', '争吵图片/1781011872331.jpeg',
+    '她给我的情书/情书一.jpeg', '她给我的情书/情书二.jpeg',
+    '她的照片/1781870832009.jpeg', '她的照片/1781870834729.jpeg',
+    '她的照片/1781879558453.jpeg', '她的照片/1781918756446.jpeg',
+    '她的照片/1781931055391.jpeg', '她的照片/1781931133296.jpeg',
+];
+function preloadAllImages() {
+    ALL_IMAGES.forEach(src => {
+        if (src.endsWith('.mp4')) return; // 视频不预加载
+        preloadImage(src);
+    });
+}
 
 // === 图片轮播 ===
 function initCarousel(trackId, dotsId, imagePaths, autoInterval = 3500) {
@@ -446,6 +463,8 @@ function triggerFireworks() {
 window.addEventListener('load', () => {
     createHearts();
     initMusic();
+    // 延迟一点预加载图片，优先让首屏加载
+    setTimeout(preloadAllImages, 1000);
 });
 
 // === 我写给她的情书占位内容 ===
